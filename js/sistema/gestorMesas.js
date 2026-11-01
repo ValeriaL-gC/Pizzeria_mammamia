@@ -10,6 +10,7 @@ class GestorMesas {
         }
     }
 
+
     obtenerMesa(numero) {
         return this.mesas.find(
             mesa => mesa.numero === numero

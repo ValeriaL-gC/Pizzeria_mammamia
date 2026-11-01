@@ -3,25 +3,467 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizzeria</title>
+    <title>Pizzeria Mamamia | Pizzas Artesanales</title>
+
+    <link rel="stylesheet" href="./styleCliente.css">
+
+    <!-- Fuentes de Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Librería de Iconos Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <h1>Sistema de Gestión para Pizzería</h1>
 
-    <script src="js/estructuras/ListaEnlazada.js"></script>
+    <!-- HEADER / NAVBAR -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i data-lucide="pizza"></i>
+            </div>
+            <div class="logo-text">
+                <span class="brand-name">Pizzeria Mamamia</span>
+                <span class="brand-tagline">Tradición Artesanal</span>
+            </div>
+        </div>
 
-    <script src="js/modelos/mesa.js"></script>
-    <script src="js/modelos/pedido.js"></script>
-    <script src="js/modelos/producto.js"></script>
+        <nav class="nav-menu">
+            <a href="#" class="nav-link active">Inicio</a>
+            <a href="#menu" class="nav-link">Menú</a>
+            <a href="#nosotros" class="nav-link">Nosotros</a>
+            <a href="#contacto" class="nav-link">Contacto</a>
+        </nav>
 
-    <script src="js/estructuras/arbol.js"></script>
-    <script src="js/estructuras/arbol.js"></script>
+        <div class="header-actions">
+            <!-- Acceso de Personal -->
+            <div class="user-dropdown">
+                <button class="btn-user" id="btnUser" aria-label="Acceso de usuario">
+                    <i data-lucide="user"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="#" class="dropdown-item" data-rol="mesero">
+                        <i data-lucide="utensils"></i>
+                        <span>Mesero</span>
+                    </a>
+                    <a href="#" class="dropdown-item" data-rol="admin">
+                        <i data-lucide="settings"></i>
+                        <span>Administrador</span>
+                    </a>
+                </div>
+            </div>
+
+            <button class="btn-cart" id="btnCart">
+                <i data-lucide="shopping-bag"></i>
+                <span>Mi pedido (<strong id="cartCount">0</strong>)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <button class="carousel-arrow prev" id="prevBtn" aria-label="Anterior">
+            <i data-lucide="chevron-left"></i>
+        </button>
+        <button class="carousel-arrow next" id="nextBtn" aria-label="Siguiente">
+            <i data-lucide="chevron-right"></i>
+        </button>
+
+        <div class="hero-container">
+            <!-- SLIDE 1 -->
+            <div class="hero-slide active">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        LA MEJOR PIZZA<br>
+                        <span class="highlight">A UN SOLO CLIC</span>
+                    </h1>
+                    <p class="hero-description">
+                        Ingredientes frescos, masa artesanal y el sabor tradicional en cada bocado.
+                    </p>
+                    <a href="#menu" class="btn-main">
+                        <i data-lucide="utensils-crossed"></i>
+                        <span>VER MENÚ</span>
+                    </a>
+                </div>
+                <div class="hero-image-wrapper">
+                    <img src="img/margarita.jpg" alt="Pizza artesanal con albahaca y mozzarella" class="hero-pizza-img">
+                </div>
+            </div>
+
+            <!-- SLIDE 2 -->
+            <div class="hero-slide">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        SABOR TRADICIONAL<br>
+                        <span class="highlight">HORNO DE PIEDRA</span>
+                    </h1>
+                    <p class="hero-description">
+                        Masa con fermentación lenta de 48 horas para una textura crujiente y liviana.
+                    </p>
+                    <a href="#menu" class="btn-main">
+                        <i data-lucide="shopping-cart"></i>
+                        <span>PEDIR AHORA</span>
+                    </a>
+                </div>
+                <div class="hero-image-wrapper">
+                    <img src="img/suprema.jpg" alt="Pizza recién salida del horno de piedra" class="hero-pizza-img">
+                </div>
+            </div>
+
+            <!-- SLIDE 3 -->
+            <div class="hero-slide">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        OFERTAS ESPECIALES<br>
+                        <span class="highlight">TODOS LOS DÍAS</span>
+                    </h1>
+                    <p class="hero-description">
+                        Combos familiares elaborados con vegetales locales y embutidos seleccionados.
+                    </p>
+                    <a href="#menu" class="btn-main">
+                        <i data-lucide="tag"></i>
+                        <span>Mira nuestro menu</span>
+                    </a>
+                </div>
+                <div class="hero-image-wrapper">
+                    <img src="img/cuatro-quesos.jpg" alt="Variedad de pizzas e ingredientes" class="hero-pizza-img">
+                </div>
+            </div>
+        </div>
+
+        <div class="carousel-dots">
+            <span class="dot active" data-slide="0"></span>
+            <span class="dot" data-slide="1"></span>
+            <span class="dot" data-slide="2"></span>
+        </div>
+    </section>
+
+    <!-- MENÚ PRINCIPAL -->
+    <section id="menu" class="popular-section">
+        <div class="section-header">
+            <span class="sub-title">NUESTRO MENÚ</span>
+            <h2 class="main-title">NUESTROS PRODUCTOS</h2>
+            <p class="section-desc">Selección de nuestras especialidades preparadas al momento.</p>
+        </div>
+
+        <!-- BOTONES DE CATEGORÍA -->
+        <div class="categories-bar">
+            <button class="cat-btn active" data-category="todas">Todas</button>
+            <button class="cat-btn" data-category="tradicionales">Tradicionales</button>
+            <button class="cat-btn" data-category="especiales">Especiales</button>
+            <button class="cat-btn" data-category="bebidas">Bebidas</button>
+            <button class="cat-btn" data-category="postres">Postres</button>
+        </div>
+
+        <!-- PARRILLA DE PRODUCTOS (se renderiza desde el menú compartido) -->
+        <div class="pizzas-grid" id="pizzasGrid"></div>
+    </section>
+
+    <!-- PANEL LATERAL DEL CARRITO -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-sidebar-header">
+            <h3>Tu Pedido</h3>
+            <button class="close-cart" id="closeCart" aria-label="Cerrar carrito">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        
+        <!-- OPCIONES DE SERVICIO -->
+        <div class="tipo-pedido-container" style="padding: 1rem 1.5rem 0.5rem; border-bottom: 1px solid #334155;">
+
+            <label style="color: #94a3b8; font-size: 0.85rem; display: block; margin-bottom: 0.5rem;">
+                Tipo de pedido:
+            </label>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 0.75rem;">
+
+                <button
+                    type="button"
+                    id="btnDelivery"
+                    style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #eab308; background: #eab308; color: #0f172a; font-weight: 600; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 4px;"
+                >
+                    <i data-lucide="bike" style="width: 14px; height: 14px;"></i>
+                    Delivery
+                </button>
+
+                <button
+                    type="button"
+                    id="btnRetiro"
+                    style="flex: 1; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #94a3b8; font-weight: 600; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 4px;"
+                >
+                    <i data-lucide="store" style="width: 14px; height: 14px;"></i>
+                    Retirar
+                </button>
+
+            </div>
+
+            <!-- DATOS DEL CLIENTE -->
+            <div id="datosClienteGroup">
+
+                <label
+                    for="inputNombreCliente"
+                    style="color: #94a3b8; font-size: 0.8rem; display: block; margin-bottom: 0.3rem;"
+                >
+                    Nombre y apellido:
+                </label>
+
+                <input
+                    type="text"
+                    id="inputNombreCliente"
+                    placeholder="Ej: Victor Alonzo"
+                    style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 0.9rem; box-sizing: border-box; outline: none; margin-bottom: 0.6rem;"
+                >
+
+            </div>
+
+            <!-- DATOS DELIVERY -->
+            <div id="datosDeliveryGroup">
+
+                <label
+                    for="inputDireccion"
+                    style="color: #94a3b8; font-size: 0.8rem; display: block; margin-bottom: 0.3rem;"
+                >
+                    Dirección de entrega:
+                </label>
+
+                <input
+                    type="text"
+                    id="inputDireccion"
+                    placeholder="Ej: Av. Manabí y 10 de Agosto"
+                    style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 0.9rem; box-sizing: border-box; outline: none; margin-bottom: 0.6rem;"
+                >
+
+                <label
+                    for="inputReferencia"
+                    style="color: #94a3b8; font-size: 0.8rem; display: block; margin-bottom: 0.3rem;"
+                >
+                    Referencia:
+                </label>
+
+                <input
+                    type="text"
+                    id="inputReferencia"
+                    placeholder="Ej: Frente al parque"
+                    style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 0.9rem; box-sizing: border-box; outline: none;"
+                >
+
+            </div>
+
+        </div>
 
 
-    <script src="js/sistema/gestorMesas.js"></script>
-    <script src="js/sistema/gestorPedidos.js"></script> 
-    <script src="js/sistema/gestorMenu.js"></script>
 
-    <script src="js/app.js"></script>
+        <div class="cart-items" id="cartItems">
+            <p class="empty-msg">Tu carrito está vacío</p>
+        </div>
+        
+        <div class="cart-sidebar-footer">
+            <div class="cart-total-box">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="btn-checkout" id="btnCheckout">Confirmar Pedido</button>
+        </div>
+    </aside>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="contacto">
+        <div class="footer-container">
+            <div class="footer-col brand-col">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i data-lucide="pizza"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span class="brand-name">PIZZERIA</span>
+                        <span class="brand-tagline">MAMAMIA</span>
+                    </div>
+                </div>
+                <p class="footer-desc">
+                    Masa fresca preparada diariamente, ingredientes seleccionados y horneado tradicional a la piedra.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-icon" aria-label="Instagram">
+                        <i data-lucide="instagram"></i>
+                    </a>
+                    <a href="#" class="social-icon" aria-label="Facebook">
+                        <i data-lucide="facebook"></i>
+                    </a>
+                    <a href="#" class="social-icon" aria-label="Message Circle">
+                        <i data-lucide="message-circle"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-title">Navegación</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#menu">Nuestro Menú</a></li>
+                    <li><a href="#">Promociones</a></li>
+                    <li><a href="#nosotros">Sobre Nosotros</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-title">Horarios</h4>
+                <ul class="footer-info">
+                    <li><span>Lunes - Jueves:</span> 12:00 PM - 10:00 PM</li>
+                    <li><span>Viernes - Sábado:</span> 12:00 PM - 11:30 PM</li>
+                    <li><span>Domingos:</span> 01:00 PM - 10:00 PM</li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-title">Contacto</h4>
+                <ul class="footer-info icon-list">
+                    <li>
+                        <i data-lucide="map-pin"></i>
+                        <span>Av. Principal #123, Centro</span>
+                    </li>
+                    <li>
+                        <i data-lucide="phone"></i>
+                        <span>+593 99 123 4567</span>
+                    </li>
+                    <li>
+                        <i data-lucide="mail"></i>
+                        <span>pedidos@pizzeria.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Pizzeria Mamamia. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL NOSOTROS -->
+    <div id="nosotros" class="modal-overlay">
+        <div class="modal-container">
+            <a href="#" class="modal-close" aria-label="Cerrar modal">
+                <i data-lucide="x"></i>
+            </a>
+            <div class="modal-body">
+                <div class="modal-image-wrapper">
+                    <img src="img/jamon.jpg" alt="Horno de leña artesanal" class="modal-img">
+                    <div class="modal-badge">
+                        <span class="badge-number">100%</span>
+                        <span class="badge-text">Artesanal</span>
+                    </div>
+                </div>
+
+                <div class="modal-content">
+                    <span class="sub-title">NUESTRA HISTORIA</span>
+                    <h2 class="modal-title">PASIÓN POR EL VERDADERO SABOR</h2>
+                    <p class="modal-text">
+                        Comenzamos con un pequeño horno de piedra y el firme propósito de elaborar pizzas con procesos de fermentación natural y materia prima de la más alta calidad.
+                    </p>
+                    <div class="modal-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">
+                                <i data-lucide="flame"></i>
+                            </span>
+                            <div>
+                                <h4>Horno de Piedra</h4>
+                                <p>Cocción constante para una masa crujiente por fuera y suave por dentro.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">
+                                <i data-lucide="leaf"></i>
+                            </span>
+                            <div>
+                                <h4>100% Natural</h4>
+                                <p>Ingredientes frescos de productores locales, libres de conservantes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA CLAVE DE ACCESO -->
+    <!-- ACCESO DE PERSONAL -->
+
+    <div id="authModal">
+        <div class="auth-container">
+
+            <h2 id="authTitle">Acceso</h2>
+
+            <p id="authDescription">
+                Ingresa la contraseña de acceso.
+            </p>
+
+            <input
+                type="password"
+                id="authPinInput"
+                placeholder="Contraseña"
+            >
+
+            <div class="auth-buttons">
+                <button id="btnConfirmAuth">
+                    Continuar
+                </button>
+
+                <button id="btnCancelAuth">
+                    Cancelar
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- LOGIN DEL USUARIO -->
+
+    <div id="userLoginModal">
+
+        <div class="user-login-container">
+
+            <h2 id="userLoginTitle">
+                Iniciar sesión
+            </h2>
+
+            <p id="userLoginDescription">
+                Ingresa tus datos para continuar.
+            </p>
+
+            <input
+                type="text"
+                id="userLoginInput"
+                placeholder="Usuario"
+                autocomplete="username"
+            >
+
+            <input
+                type="password"
+                id="userPasswordInput"
+                placeholder="Contraseña"
+                autocomplete="current-password"
+            >
+
+            <div class="auth-buttons">
+
+                <button id="btnConfirmUserLogin">
+                    Ingresar
+                </button>
+
+                <button id="btnCancelUserLogin">
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Lógica de la interfaz del cliente -->
+    <script src="js/interfaz/interfaz.js"></script>
 </body>
 </html>

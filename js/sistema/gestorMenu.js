@@ -2,6 +2,9 @@ class GestorMenu {
 
     constructor() {
         this.menu = [];
+
+        this.grafo = new Grafo();
+        this.arbol = null;
     }
 
     cargarProductos() {
@@ -76,6 +79,48 @@ class GestorMenu {
 
     }
 
+    //grafo
+    crearGrafoProductos(){
+
+        this.menu.forEach(producto => {
+
+            this.grafo.agregarNodo(producto);
+
+        });
+
+        this.grafo.conectarProductos(
+            "Pepperoni",
+            "Coca-Cola"
+        );
+
+        this.grafo.conectarProductos(
+            "Pepperoni",
+            "Brownie"
+        );
+
+        this.grafo.conectarProductos(
+            "Hawaiana",
+            "Sprite"
+        );
+
+        this.grafo.conectarProductos(
+            "Hawaiana",
+            "Cheesecake"
+        );
+
+        this.grafo.conectarProductos(
+            "BBQ",
+            "Coca-Cola"
+        );
+
+        this.grafo.conectarProductos(
+            "Cuatro Quesos",
+            "Agua"
+        );
+
+    }
+
+
     mostrarMenu() {
 
         console.log("===== MENÚ =====");
@@ -96,6 +141,7 @@ class GestorMenu {
         return null;
     }
 
+    //bubble sort
     ordenarPorNombre(){
         for(let i = 0; i < this.menu.length - 1; i++){
             for(let j = 0; j < this.menu.length - i - 1; j++){
@@ -128,6 +174,24 @@ class GestorMenu {
         }
 
         return null;
+    }
+
+    obtenerProductoPorNombre(nombre){
+
+        for(let producto of this.menu){
+            if(producto.nombre === nombre){
+                return producto;
+            }
+        }
+
+        return null;
+
+    }
+
+    mostrarRelacionados(nombreProducto){
+
+        return this.grafo.obtenerRelacionados(nombreProducto);
+
     }
 
 }

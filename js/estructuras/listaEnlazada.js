@@ -11,7 +11,6 @@ class ListaEnlazada {
         this.cabeza = null;
     }
 
-    // INSERTAR
     insertar(dato) {
         const nuevoNodo = new Nodo(dato);
         if (this.cabeza === null) {
@@ -27,7 +26,6 @@ class ListaEnlazada {
         actual.siguiente = nuevoNodo;
     }
 
-    // BUSCAR
     buscar(numeroPedido) {
         let actual = this.cabeza;
         while (actual !== null) {
@@ -43,7 +41,6 @@ class ListaEnlazada {
 
     }
 
-    // MODIFICAR
     modificar(numeroPedido, nuevosDatos) {
         let actual = this.cabeza;
         while (actual !== null) {
@@ -60,7 +57,6 @@ class ListaEnlazada {
 
     }
 
-    // ELIMINAR
     eliminar(numeroPedido) {
         if (this.cabeza === null) {
             return false;
@@ -88,7 +84,6 @@ class ListaEnlazada {
 
     }
 
-    // RECORRER
     recorrer() {
         let pedidos = [];
         let actual = this.cabeza;

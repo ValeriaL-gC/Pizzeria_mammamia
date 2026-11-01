@@ -6,6 +6,10 @@ class Mesa {
         this.estado = "Libre";
         this.pedidoActual = null;
 
+        // Tandas anteriores: pedidos ya enviados a cocina
+        // (historial de la mesa). Cada elemento es un Pedido.
+        this.tandas = [];
+
     }
 
     ocupar(pedido) {

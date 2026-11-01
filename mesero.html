@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzeria Mamma Mia - POS System</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <header class="encabezado">
+        <div class="logo-container">
+            <i class="fa-solid fa-pizza-slice logo-icon"></i>
+            <div>
+                <h1>MAMMA MIA</h1>
+                <span class="subtitulo">Sistema de Gestión Pizzeria</span>
+            </div>
+        </div>
+
+        <div class="acciones-encabezado">
+
+            <span id="sesionActiva" class="sesion-activa">
+                <i class="fa-solid fa-id-badge"></i>
+                <span id="sesionActivaTexto">Invitado</span>
+            </span>
+
+            <button id="btnVistaCliente" class="btn-vista-cliente">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+                Vista Cliente
+            </button>
+
+            <button id="btnAdmin" class="btn-admin">
+                <i class="fa-solid fa-user-gear"></i>
+                Administración
+            </button>
+
+        </div>
+    </header>
+
+    <!-- ===== MODAL: CLAVE DE ADMINISTRADOR ===== -->
+    <!-- Se muestra solo si quien inició sesión no es ya
+         administrador y quiere entrar al panel de admin. -->
+    <div id="modalClaveAdmin" class="modal-overlay oculto">
+        <div class="modal-seguridad">
+            <div class="seguridad-icono">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2>Acceso de administrador</h2>
+            <p>Ingresa la contraseña de administrador para continuar.</p>
+            <input type="password" id="inputClaveAdmin" placeholder="Contraseña">
+            <div class="seguridad-acciones">
+                <button type="button" id="btnCancelarClaveAdmin" class="btn-secundario">Cancelar</button>
+                <button type="button" id="btnConfirmarClaveAdmin" class="btn-primario">Ingresar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: DETALLE DE TIEMPOS DE UN PEDIDO ===== -->
+    <div id="modalDetallePedido" class="modal-overlay oculto">
+        <div class="modal-admin modal-detalle-pedido">
+            <div class="modal-encabezado">
+                <h2><i class="fa-solid fa-clock"></i> <span id="tituloDetallePedido">Detalle del pedido</span></h2>
+                <button id="btnCerrarDetallePedido" class="btn-cerrar" title="Cerrar">×</button>
+            </div>
+            <div class="modal-contenido">
+                <div id="detallePedidoEstado" class="detalle-pedido-estado"></div>
+                <div id="detalleProductosTiempo" class="detalle-productos-tiempo"></div>
+                <div class="detalle-pedido-total">
+                    <span>Tiempo total estimado</span>
+                    <strong id="detalleTiempoTotal">0 min</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SUGERENCIA DE PRODUCTOS RELACIONADOS (GRAFO) ===== -->
+    <!-- Tarjeta flotante no bloqueante: aparece una sola vez por
+         producto dentro de cada pedido, no interrumpe al mesero. -->
+    <div id="popupSugerencias" class="popup-sugerencias oculto">
+        <div class="popup-sugerencias-encabezado">
+            <span><i class="fa-solid fa-wand-magic-sparkles"></i> ¿Le ofrecemos algo más?</span>
+            <button id="btnCerrarSugerencias" class="btn-cerrar" title="Cerrar">×</button>
+        </div>
+        <p id="popupSugerenciasTexto"></p>
+        <div id="popupSugerenciasLista" class="popup-sugerencias-lista"></div>
+    </div>
+
+        
+    <main class="tablero">
+
+        <!-- =========================================
+            VISTA 1: SELECCIÓN DE MESAS
+            ========================================= -->
+        <section id="vistaMesas" class="vista">
+
+            <div class="titulo-seccion">
+                <div>
+                    <h2>
+                        <i class="fa-solid fa-chair"></i>
+                        Mesas del restaurante
+                    </h2>
+                    <p>Selecciona una mesa para comenzar a gestionar su pedido.</p>
+                </div>
+            </div>
+
+            <div id="mesas" class="mesas-grid">
+                <!-- Las 10 mesas se generan desde app.js -->
+            </div>
+
+            <!-- LISTA DE ESPERA: pedidos activos y su estado en cocina -->
+            <div class="seccion-lista-espera">
+                <div class="titulo-seccion-espera">
+                    <h3>
+                        <i class="fa-solid fa-list-check"></i>
+                        Lista de espera
+                    </h3>
+                    <p>Pedidos enviados a cocina, en orden de llegada. Toca uno para ver el detalle de tiempos.</p>
+                </div>
+
+                <div id="listaEspera" class="lista-espera">
+                    <p class="pedido-vacio">No hay pedidos en cocina por el momento.</p>
+                </div>
+            </div>
+
+            <!-- COLA DE SOLICITUDES / MODIFICACIONES -->
+            <!-- Pedidos "En espera" que piden agregar, quitar
+                 productos o cancelar el pedido. -->
+            <div class="seccion-lista-espera">
+                <div class="titulo-seccion-espera">
+                    <h3>
+                        <i class="fa-solid fa-clipboard-list"></i>
+                        Solicitudes de modificación
+                    </h3>
+                    <p>Pedidos "En espera" que solicitan agregar o quitar productos, o cancelar el pedido. Acéptalas para aplicarlas.</p>
+                </div>
+
+                <div id="colaModificaciones" class="cola-modificaciones">
+                    <p class="pedido-vacio">No hay solicitudes pendientes.</p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+            VISTA 2: PEDIDO DE UNA MESA
+            ========================================= -->
+        <section id="vistaPedido" class="vista oculto">
+
+            <!-- ENCABEZADO DE LA MESA -->
+            <div class="cabecera-mesa">
+
+                <button id="btnVolverMesas" class="btn-volver">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Volver a mesas
+                </button>
+
+                <div class="info-mesa-titulo">
+                    <h2>
+                        <i class="fa-solid fa-chair"></i>
+                        <span id="numeroMesaActual">Mesa</span>
+                    </h2>
+
+                    <span id="estadoMesaActual" class="estado-mesa">
+                        Libre
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div class="contenido-mesa">
+
+                <!-- =================================
+                    COLUMNA IZQUIERDA: MENÚ
+                    ================================= -->
+                <section class="panel panel-menu">
+
+                    <div class="panel-titulo">
+                        <div>
+                            <h2>
+                                <i class="fa-solid fa-utensils"></i>
+                                Menú
+                            </h2>
+                            <p>Selecciona los productos para agregarlos al pedido.</p>
+                        </div>
+                    </div>
+
+
+                    <!-- BUSCADOR Y ORDENAMIENTO -->
+                    <div class="menu-controles">
+
+                        <input
+                            type="text"
+                            id="buscarMenu"
+                            placeholder="Buscar producto..."
+                        >
+
+                        <div class="menu-ordenar">
+
+                            <button
+                                id="btnOrdenarNombre"
+                                title="Ordenar por nombre"
+                            >
+                                A→Z
+                            </button>
+
+                            <button
+                                id="btnOrdenarPrecio"
+                                title="Ordenar por precio"
+                            >
+                                $
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CATEGORÍAS -->
+                    <div id="categoriasMenu" class="categorias-menu">
+
+                        <button
+                            class="categoria-btn activa"
+                            data-categoria="todas"
+                        >
+                            Todas
+                        </button>
+
+                        <button
+                            class="categoria-btn"
+                            data-categoria="Pizzas/Tradicionales"
+                        >
+                            Tradicionales
+                        </button>
+
+                        <button
+                            class="categoria-btn"
+                            data-categoria="Pizzas/Especiales"
+                        >
+                            Especiales
+                        </button>
+
+                        <button
+                            class="categoria-btn"
+                            data-categoria="Bebidas"
+                        >
+                            Bebidas
+                        </button>
+
+                        <button
+                            class="categoria-btn"
+                            data-categoria="Postres"
+                        >
+                            Postres
+                        </button>
+
+                    </div>
+
+
+                    <!-- PRODUCTOS -->
+                    <div id="menu" class="productos-grid">
+
+                        <!-- Los productos serán generados desde app.js -->
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================
+                    COLUMNA DERECHA: INFORMACIÓN
+                    Y PEDIDO
+                    ================================= -->
+                <aside class="panel panel-pedido">
+
+                    <div class="panel-titulo">
+
+                        <div>
+                            <h2>
+                                <i class="fa-solid fa-receipt"></i>
+                                Pedido
+                            </h2>
+
+                            <p>
+                                Información de la mesa y productos seleccionados.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <!-- DATOS DEL CLIENTE -->
+                    <div class="datos-pedido">
+
+                        <h3>
+                            <i class="fa-solid fa-user"></i>
+                            Datos del cliente
+                        </h3>
+
+                        <div class="campo">
+
+                            <label for="nombreCliente">
+                                Nombre
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nombreCliente"
+                                placeholder="Nombre del cliente"
+                            >
+
+                        </div>
+
+
+                        <div class="campo">
+
+                            <label for="numeroPersonas">
+                                Número de personas
+                            </label>
+
+                            <input
+                                type="number"
+                                id="numeroPersonas"
+                                min="1"
+                                value="1"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRODUCTOS DEL PEDIDO -->
+                    <div class="pedido-contenido">
+
+                        <h3>
+                            <i class="fa-solid fa-basket-shopping"></i>
+                            Productos
+                        </h3>
+
+                        <div
+                            id="pedido"
+                            class="contenedor-items-pedido"
+                        >
+
+                            <p class="pedido-vacio">
+                                No hay productos en el pedido.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- NUEVA TANDA DE PEDIDO -->
+                    <button
+                        id="btnNuevaTanda"
+                        class="btn-nueva-tanda oculto"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Nueva tanda de pedido
+                    </button>
+
+
+                    <!-- TOTAL -->
+                    <div class="pedido-total">
+
+                        <span>Total del pedido actual</span>
+
+                        <strong id="totalPedido">
+                            $0.00
+                        </strong>
+
+                    </div>
+
+
+                    <!-- TOTAL GENERAL DE LA MESA -->
+                    <div class="pedido-total-general">
+
+                        <span>Total General de la Mesa</span>
+
+                        <strong id="totalGeneral">
+                            $0.00
+                        </strong>
+
+                    </div>
+
+
+                    <!-- RESUMEN COMPLETO DE LA MESA -->
+                    <button
+                        id="btnVerResumen"
+                        class="btn-resumen-mesa"
+                    >
+                        <i class="fa-solid fa-list"></i>
+                        Ver resumen completo de la mesa
+                    </button>
+
+
+                    <!-- ACCIONES -->
+                    <div class="acciones-pedido">
+
+                        <button
+                            id="btnDeshacer"
+                            class="btn-secundario"
+                            title="Deshacer última acción"
+                        >
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Deshacer
+                        </button>
+
+                        <button
+                            id="btnEnviar"
+                            class="btn-primario"
+                        >
+                            <i class="fa-solid fa-paper-plane"></i>
+                            Enviar a cocina
+                        </button>
+
+                        <button
+                            id="btnCobrar"
+                            class="btn-exito"
+                        >
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            Cobrar
+                        </button>
+
+                    </div>
+
+
+                    <!-- CANCELAR PEDIDO -->
+                    <!-- Directo en "Creado"; solicitud en
+                         "En espera"; oculto en otros estados. -->
+                    <button
+                        id="btnCancelarPedido"
+                        class="btn-cancelar-pedido oculto"
+                    >
+                        <i class="fa-solid fa-ban"></i>
+                        Cancelar pedido
+                    </button>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ===== PANEL DE ADMINISTRACIÓN ===== -->
+    <div id="modalAdmin" class="modal-overlay oculto">
+        <div class="modal-admin">
+            <div class="modal-encabezado">
+                <h2><i class="fa-solid fa-user-gear"></i> Panel de Administración</h2>
+                <button id="btnCerrarAdmin" class="btn-cerrar" title="Cerrar">×</button>
+            </div>
+
+            <div class="pestanas">
+                <button class="pestana activa" data-pestana="ventas">
+                    <i class="fa-solid fa-chart-line"></i> Ventas del día
+                </button>
+                <button class="pestana" data-pestana="menu">
+                    <i class="fa-solid fa-utensils"></i> Gestión de Menú
+                </button>
+            </div>
+
+            <div class="modal-contenido">
+
+                <!-- Pestana: Ventas del día -->
+                <section id="pestana-ventas">
+                    <div class="resumen-ventas">
+                        <div class="dato">
+                            <span>Pedidos cobrados</span>
+                            <b id="totalPedidos">0</b>
+                        </div>
+                        <div class="dato">
+                            <span>Total del día</span>
+                            <b id="totalVentas">$0.00</b>
+                        </div>
+                        <button id="btnLimpiarVentas" title="Borrar registro">
+                            <i class="fa-solid fa-trash"></i> Limpiar registro
+                        </button>
+                    </div>
+
+                    <table class="tabla-ventas">
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Mesa</th>
+                                <th>Total</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <div class="resumen-productos">
+                        <h3>Productos vendidos hoy</h3>
+                        <div id="resumenProductos"></div>
+                    </div>
+                </section>
+
+                <!-- Pestana: Gestión de Menú (CRUD) -->
+                <section id="pestana-menu" class="oculto">
+                    <form id="formProducto">
+                        <h3 id="tituloFormProducto">Agregar producto</h3>
+                        <input type="hidden" id="productoId">
+                        <input type="text" id="productoNombre" placeholder="Nombre del producto">
+                        <select id="productoCategoria">
+                            <option value="Pizzas/Tradicionales">Pizzas/Tradicionales</option>
+                            <option value="Pizzas/Especiales">Pizzas/Especiales</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Postres">Postres</option>
+                        </select>
+                        <input type="number" id="productoPrecio" placeholder="Precio" step="0.01" min="0">
+                        <input type="number" id="productoTiempo" placeholder="Minutos de preparación" step="1" min="1">
+                        <div style="display:flex;gap:8px;">
+                            <button type="submit" class="btn-primario" id="btnGuardarProducto">
+                                <i class="fa-solid fa-plus"></i> Agregar
+                            </button>
+                            <button type="button" id="btnCancelarEdicion" class="oculto">
+                                Cancelar edición
+                            </button>
+                        </div>
+                    </form>
+
+                    <h3>Productos del menú</h3>
+                    <div id="listaProductosAdmin"></div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: RESUMEN COMPLETO DE LA MESA ===== -->
+    <div id="modalResumenMesa" class="modal-overlay oculto">
+        <div class="modal-admin modal-resumen-mesa">
+            <div class="modal-encabezado">
+                <h2>
+                    <i class="fa-solid fa-receipt"></i>
+                    <span id="tituloResumenMesa">Resumen de la mesa</span>
+                </h2>
+                <button
+                    id="btnCerrarResumenMesa"
+                    class="btn-cerrar"
+                    title="Cerrar"
+                >×</button>
+            </div>
+            <div class="modal-contenido">
+                <div
+                    id="contenidoResumenMesa"
+                    class="resumen-mesa-contenido"
+                ></div>
+                <div class="detalle-pedido-total">
+                    <span>Total final a pagar</span>
+                    <strong id="totalResumenMesa">$0.00</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts de la aplicación -->
+    <script src="js/estructuras/listaEnlazada.js"></script>
+    <script src="js/estructuras/arbol.js"></script>
+    <script src="js/estructuras/grafo.js"></script>
+    <script src="js/estructuras/pila.js"></script>
+    <script src="js/estructuras/cola.js"></script>
+
+    <script src="js/modelos/producto.js"></script>
+    <script src="js/modelos/mesa.js"></script>
+    <script src="js/modelos/pedido.js"></script>
+
+    <script src="js/sistema/gestorMesas.js"></script>
+    <script src="js/sistema/gestorPedidos.js"></script>
+    <script src="js/sistema/gestorMenu.js"></script>
+    <script src="js/sistema/gestorCocina.js"></script>
+    <script src="js/sistema/gestorModificaciones.js"></script>
+    <script src="js/sistema/gestorVentas.js"></script>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
